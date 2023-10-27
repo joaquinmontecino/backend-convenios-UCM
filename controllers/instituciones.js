@@ -26,13 +26,13 @@ async function get(req, res, next) {
 module.exports.get = get;
 
 // Función para obtener los datos de una institucion a partir de la solicitud.
-function getInstitucionFromRec(req) {
+function getInstitucionFromReq(req) {
   const institucion = {
     nombre_inst: req.body.nombre_inst,
     unidad_academica: req.body.unidad_academica,
     pais: req.body.pais,
     alcance: req.body.alcance,
-    tipo_institucion: req.body.tipo_institucion,
+    tipo_institucion: req.body.tipo_institucion
   };
 
   return institucion;
@@ -41,7 +41,7 @@ function getInstitucionFromRec(req) {
 // Controlador para crear una nueva institucion.
 async function post(req, res, next) {
   try {
-    let institucion = getInstitucionFromRec(req);         // Obtener los datos de la institucion de la solicitud
+    let institucion = getInstitucionFromReq(req);         // Obtener los datos de la institucion de la solicitud
 
     institucion = await instituciones.create(institucion);    // Crear una nueva institucion en la base de datos
 
@@ -57,7 +57,7 @@ module.exports.post = post;
 // Controlador para actualizar una institucion existente.
 async function put(req, res, next) {
   try {
-    let institucion = getInstitucionFromRec(req);               // Obtener los datos de la institucion de la solicitud
+    let institucion = getInstitucionFromReq(req);               // Obtener los datos de la institucion de la solicitud
 
     institucion.id_institucion = parseInt(req.params.id, 10);   // Obtener el ID de la institucion a actualizar
 

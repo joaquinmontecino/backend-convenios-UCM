@@ -67,7 +67,7 @@ async function create(conv) {
   convenio.id_convenio = {
     dir: oracledb.BIND_OUT,         // Especifica que es una salida
     type: oracledb.NUMBER           // Especifica el tipo de dato como número
-  }
+  };
   
   // Ejecuta la consulta SQL de inserción en la base de datos y pasa el objeto "convenio" como argumento
   const result = await database.simpleExecute(createSql, convenio);

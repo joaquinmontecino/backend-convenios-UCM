@@ -26,7 +26,7 @@ async function get(req, res, next) {
 
 
 // Función para obtener los datos de un convenio a partir de la solicitud.
-function getConvenioFromRec(req) {
+function getConvenioFromReq(req) {
   const convenio = {
     nombre_conv: req.body.nombre_conv,
     tipo_conv: req.body.tipo_conv,
@@ -43,7 +43,7 @@ function getConvenioFromRec(req) {
 // Controlador para crear un nuevo convenio.
 async function post(req, res, next) {
   try {
-    let convenio = getConvenioFromRec(req);         // Obtener los datos del convenio de la solicitud
+    let convenio = getConvenioFromReq(req);         // Obtener los datos del convenio de la solicitud
 
     convenio = await convenios.create(convenio);    // Crear un nuevo convenio en la base de datos
 
@@ -58,7 +58,7 @@ async function post(req, res, next) {
 // Controlador para actualizar un convenio existente.
 async function put(req, res, next) {
   try {
-    let convenio = getConvenioFromRec(req);               // Obtener los datos del convenio de la solicitud
+    let convenio = getConvenioFromReq(req);               // Obtener los datos del convenio de la solicitud
 
     convenio.id_convenio = parseInt(req.params.id, 10);   // Obtener el ID del convenio a actualizar
 
