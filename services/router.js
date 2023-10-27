@@ -1,7 +1,8 @@
 const express = require('express');
 const router = new express.Router();
 const convenios = require('../controllers/convenios.js');
-const instituciones = require('../controllers/instituciones.js')
+const instituciones = require('../controllers/instituciones.js');
+const usuarios = require('../controllers/usuarios.js');
 
 
 // Definición de rutas para la gestión de convenios, opcionalmente especificando un ID
@@ -16,5 +17,10 @@ router.route('/instituciones/:id?')
   .post(instituciones.post)         
   .put(instituciones.put)           
   .delete(instituciones.delete);    
+
+router.route('/usuarios/register').post(usuarios.register);
+router.route('/usuarios/login').post(usuarios.login);
+router.route('/usuarios/').get(usuarios.get);
+router.route('/usuarios/perfil=:id').get(usuarios.get);
 
 module.exports = router;

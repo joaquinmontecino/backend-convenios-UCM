@@ -4,14 +4,14 @@ const oracledb = require('oracledb');
 
 // Consulta base para seleccionar los datos de los convenios
 const baseSelectQuery = 
- `select id_convenio "id",
+ `select id_convenio "ID_Convenio",
     nombre_conv "Nombre_Convenio",
     tipo_conv "Tipo_Convenio",
     vigencia "Vigencia",
-    ano_firma "Ano_Firma",
+    ano_firma "Anio_Firma",
     tipo_firma "Tipo_Firma",
-    cupos "cupos",
-    documentos "documentos"
+    cupos "Cupos",
+    documentos "Documentos"
   from convenio`;
 
 // Función para buscar convenios en la base de datos según el target proporcionado

@@ -16,7 +16,7 @@ const createSql =
     vigencia,
     privilegios
     )values (
-    :id_usuario,
+    0,
     :email,
     :contrasena,
     :nombre,
@@ -56,3 +56,36 @@ async function authenticate(credentials){
   }
 }
 module.exports.authenticate = authenticate;
+
+
+const selectQueryConID= `
+  SELECT email "Email",
+  nombre "Nombre",
+  apellido "Apellido"
+  FROM usuario
+  WHERE id_usuario = :id_usuario
+`;
+const selectQuerySinID= `
+  SELECT id_usuario "ID_Usuario",
+  email "Email",
+  nombre "Nombre",
+  apellido "Apellido",
+  vigencia "Vigencia",
+  privilegios "Privilegios"
+  FROM usuario
+`;
+
+
+async function find(target){
+  let query = selectQuerySinID;
+  const binds = {};
+
+  if (target.id){
+    binds.id_usuario = target.id;
+    query = selectQueryConID;
+  }
+
+  const result = await database.simpleExecute(query, binds);
+  return result.rows;
+}
+module.exports.find = find;

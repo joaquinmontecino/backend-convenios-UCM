@@ -29,6 +29,27 @@ async function login(req, res ,next){
 }
 module.exports.login = login;
 
+async function get(req,res,next){
+  try{
+    const target = {};
+    target.id = Number(req.params.id);
+    const rows = await usuarios.find(target);
+
+    if (req.params.id) {
+      if (rows.length === 1) {
+        res.status(200).json(rows[0]);
+      } else {
+        res.status(404).end();
+      }
+    } else {
+      res.status(200).json(rows);
+    }
+  } catch(err){
+    next(err);
+  }
+}
+module.exports.get = get;
+
 
 function getUsuarioFromReq(req){
   const usuario = {
@@ -44,8 +65,8 @@ function getUsuarioFromReq(req){
 
 function getCredentialsFromReq(req){
   const credentials ={
-    username: req.body.username,
-    password: req.body.password
+    email: req.body.email,
+    contrasena: req.body.contrasena
   };
   return credentials;
 }
