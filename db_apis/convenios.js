@@ -47,7 +47,7 @@ const createSql =
     cupos,
     documentos
   ) values (
-    3,
+    0,
     :nombre_conv,
     :tipo_conv,
     :vigencia,
