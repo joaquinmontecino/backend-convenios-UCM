@@ -8,6 +8,7 @@
 
 ## Luego, abrir carpeta backend-convenios en la terminal y ejecutar:
 ```
+npm i
 npm install express
 npm install morgan
 npm install oracledb
