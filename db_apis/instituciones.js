@@ -129,3 +129,15 @@ return result.outBinds.rowcount === 1;
 }
 
 module.exports.delete = del;
+
+
+const nombresSqlInstitucion = 
+  `select nombre_inst "Nombre_Institucion"
+  from institucion`;
+
+async function listarNombres(){
+  let query = nombresSqlInstitucion;
+  const result = await database.simpleExecute(query, {});
+  return result.rows;
+}
+module.exports.listarNombres = listarNombres;
