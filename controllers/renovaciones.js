@@ -39,7 +39,7 @@ function getRenovacionFromReq(req) {
   
 async function post(req, res, next) {
   try {
-    let renovacion = getCoordinadorFromReq(req);
+    let renovacion = getRenovacionFromReq(req);
 
     renovacion = await renovaciones.create(renovacion);
 

@@ -16,6 +16,8 @@ async function find(target) {
   if (target.id) {
     binds.id_coordinador = target.id;
     query += `\nwhere id_coordinador = :id_coordinador`;
+  } else {
+    query += `\norder by id_coordinador`;
   }
   const result = await database.simpleExecute(query, binds);
 
@@ -26,19 +28,12 @@ module.exports.find = find;
 
 
 const createSql =
- `insert into coordinador (
-    id_coordinador,
-    tipo,
-    nombre,
-    correo
-  ) values (
-    0,
-    :tipo,
-    :nombre,
-    :correo
-  ) returning id_coordinador
-  into :id_coordinador`;
-
+  `DECLARE
+    id_coordinador_out NUMBER;
+   BEGIN
+    CREATE_COORDINADOR(0,:tipo,:nombre,:correo,id_coordinador_out);
+    :id_coordinador := id_coordinador_out;
+   END;`;
 
 async function create(coord) {
   const coordinador = Object.assign({}, coord);
@@ -50,7 +45,7 @@ async function create(coord) {
   
   const result = await database.simpleExecute(createSql, coordinador);
   
-  coordinador.id_coordinador = result.outBinds.id_coordinador[0];
+  coordinador.id_coordinador = result.outBinds.id_coordinador;
   
   return coordinador;
 }
@@ -59,13 +54,12 @@ module.exports.create = create;
 
 
 const updateSql =
- `update coordinador
-  set tipo = :tipo,
-    nombre = :nombre,
-    correo = :correo
-  where id_coordinador = :id_coordinador`;
+  `BEGIN
+     UPDATE_COORDINADOR(:id_coordinador,:tipo,:nombre,:correo);
+   END;`;
 
 
+// TO-DO: Solucionar que la funcion no entra al if, resolviendo la solicitud en status 404, cuando en realidad si funciona correctamente
 async function update(coord) {
   const coordinador = Object.assign({}, coord);
   const result = await database.simpleExecute(updateSql, coordinador);
@@ -81,14 +75,14 @@ module.exports.update = update;
 
 
 const deleteSql =
- `begin
-    
-    delete from coordinador
-    where id_coordinador = :id_coordinador;
-
-    :rowcount := sql%rowcount;
-
-  end;`
+  `
+   BEGIN
+     
+     DELETE_COORDINADOR(:id_coordinador);
+ 
+     :rowcount := sql%rowcount;
+ 
+   END;`
 
 async function del(id) {
   const binds = {

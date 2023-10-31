@@ -70,3 +70,44 @@ function getCredentialsFromReq(req){
   };
   return credentials;
 }
+
+
+
+async function put(req, res, next) {
+  try {
+    let usuario = getUsuarioFromReq(req);
+
+    usuario.id_usuario = parseInt(req.params.id, 10);
+
+    usuario = await usuarios.update(usuario);
+
+    if (usuario !== null) {
+      res.status(200).json(usuario);
+    } else {
+      res.status(404).end();
+    }
+  } catch (err) {
+    next(err);
+  }
+}
+
+module.exports.put = put;
+
+
+async function del(req, res, next) {
+  try {
+    const id = parseInt(req.params.id, 10);
+
+    const success = await usuarios.delete(id);
+
+    if (success) {
+      res.status(204).end();
+    } else {
+      res.status(404).end();
+    }
+  } catch (err) {
+    next(err);
+  }
+}
+  
+module.exports.delete = del;

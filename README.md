@@ -13,6 +13,5 @@ npm install
 
 ## Falta por hacer:
 - Terminar Usuario y sus funcionalidades (falta Recuperar contraseña, Editar datos, Otorgar privilegios y Eliminar)
-- Implementar Cordinadores
 - Implementar las tablas "detalle" para entrelazar Convenios con el resto de elementos
 - Implementar Renovaciones 

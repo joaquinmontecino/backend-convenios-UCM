@@ -17,7 +17,7 @@ function initialize() {
     app.use(express.json({
         reviver: reviveJson
       }));
-
+      
      // Montar el enrutador en la ruta /api para que todas sus rutas comiencen con /api
     app.use('/api', router);
     

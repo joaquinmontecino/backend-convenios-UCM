@@ -21,6 +21,8 @@ async function find(target) {
     binds.id_institucion = target.id;    // Si target tiene id, asigna ese valor a binds con la clave "id_institucion"
                                               // Y se adjunta a la consulta una clausula where usando el id, para asi obtener una sola institucion
     query += `\nwhere id_institucion = :id_institucion`;
+  }else {
+    query += `\norder by id_institucion`;
   }
 
   // Ejecuta la consulta en la base de datos, pasando la consulta y los valores a enlazar como argumentos
@@ -33,23 +35,14 @@ module.exports.find = find;
 
 
 // Consulta SQL para insertar una nueva institucion en la base de datos
-const createSqlInstitucion =
- `insert into institucion (
-    id_institucion,
-    nombre_inst,
-    unidad_academica,
-    pais,
-    alcance,
-    tipo_institucion
-  ) values (
-    0,
-    :nombre_inst,
-    :unidad_academica,
-    :pais,
-    :alcance,
-    :tipo_institucion
-  ) returning id_institucion
-  into :id_institucion`;
+
+  const createSqlInstitucion =
+  `DECLARE
+     id_institucion_out NUMBER;
+   BEGIN
+    CREATE_INSTITUCION(0,:nombre_inst,:unidad_academica,:pais,:alcance,:tipo_institucion,id_institucion_out);
+    :id_institucion := id_institucion_out;
+   END;`;
 
 // Función asincrónica para crear un nuevo institucion
 async function create(inst) {
@@ -65,7 +58,7 @@ async function create(inst) {
   const result = await database.simpleExecute(createSqlInstitucion, institucion);
   
   // Actualiza la propiedad "id_institucion" en "institucion" con el valor generado en la base de datos
-  institucion.id_institucion = result.outBinds.id_institucion[0];
+  institucion.id_institucion = result.outBinds.id_institucion;
   
   // Devuelve el objeto "institucion" que contiene la información del nuevo institucion creado
   return institucion;
@@ -76,13 +69,9 @@ module.exports.create = create;
 
 // Consulta SQL para actualizar una institucion existente en la base de datos
 const updateSqlInstitucion =
- `update institucion
-  set nombre_inst = :nombre_inst,
-    unidad_academica = :unidad_academica,
-    pais = :pais,
-    alcance = :alcance,
-    tipo_institucion = :tipo_institucion
-  where id_institucion = :id_institucion`;
+`BEGIN
+    UPDATE_INSTITUCION(:id_institucion,:nombre_inst,:unidad_academica,:pais,:alcance,:tipo_institucion);
+  END;`;
 
 // Función asincrónica para actualizar una institucion existente
 async function update(inst) {
@@ -103,12 +92,11 @@ module.exports.update = update;
                   // OJO: Luego hay que agregar los intermediarios
                                   //delete from detalle_convenio_institucion where id_institucion = :id_institucion;
 const deleteSqlInstitucion =
-`begin                      
-  delete from institucion
-  where id_institucion = :id_institucion;
+`BEGIN                      
+  DELETE_INSTITUCION(:id_institucion);
 
   :rowcount := sql%rowcount;                               
-end;`
+END;`
 
 // Función asincrónica para eliminar una institucion
 async function del(id) {
@@ -132,8 +120,9 @@ module.exports.delete = del;
 
 
 const nombresSqlInstitucion = 
-  `select nombre_inst "Nombre_Institucion"
-  from institucion`;
+  `select id_institucion "ID_Institucion", nombre_inst "Nombre_Institucion"
+  from institucion
+  order by id_institucion`;
 
 async function listarNombres(){
   let query = nombresSqlInstitucion;
@@ -141,3 +130,35 @@ async function listarNombres(){
   return result.rows;
 }
 module.exports.listarNombres = listarNombres;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* const createSqlInstitucion =
+ `insert into institucion (
+    id_institucion,
+    nombre_inst,
+    unidad_academica,
+    pais,
+    alcance,
+    tipo_institucion
+  ) values (
+    0,
+    :nombre_inst,
+    :unidad_academica,
+    :pais,
+    :alcance,
+    :tipo_institucion
+  ) returning id_institucion
+  into :id_institucion`;
+  */
