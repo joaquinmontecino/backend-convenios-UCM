@@ -47,24 +47,51 @@ const createSql =
   END;`;
 
 // Función asincrónica para crear un nuevo convenio
-async function create(conv) {
-  const convenio = Object.assign({}, conv);           // Crea una copia del objeto "conv" y lo asigna a una nueva variable "convenio"
+async function create(data) {
+  const datos = Object.assign({}, data);
+  const id_institucion_bind = datos.id_institucion;
+  delete datos.id_institucion;
 
-  // Define la propiedad "id_convenio" en el objeto "convenio" con metadatos para la salida (BIND_OUT)
-  convenio.id_convenio = {
+  const id_coordinador_bind = datos.id_coordinador;
+  delete datos.id_coordinador;
+
+  datos.id_convenio = {
     dir: oracledb.BIND_OUT,         // Especifica que es una salida
     type: oracledb.NUMBER           // Especifica el tipo de dato como número
   };
+
+
+  const result = await database.simpleExecute(createSql, datos);
+    
+  datos.id_convenio = result.outBinds.id_convenio;
+
+
+  const id_convenio_bind = datos.id_convenio;
+
+  const insertDetalleInstitucionSql = `INSERT INTO detalle_convenio_institucion (id_detalle_conv_inst, id_convenio, id_institucion) VALUES(0, :id_convenio_bind, :id_institucion_bind)`;
   
-  // Ejecuta la consulta SQL de inserción en la base de datos y pasa el objeto "convenio" como argumento
-  const result = await database.simpleExecute(createSql, convenio);
-  
-  // Actualiza la propiedad "id_convenio" en "convenio" con el valor generado en la base de datos
-  //convenio.id_convenio = result.outBinds.id_convenio[0];
-  convenio.id_convenio = result.outBinds.id_convenio;
-  
-  // Devuelve el objeto "convenio" que contiene la información del nuevo convenio creado
-  return convenio;
+  const bindsDetalleInstitucion = {
+    id_convenio_bind,
+    id_institucion_bind
+  };
+    
+  await database.simpleExecute(insertDetalleInstitucionSql, bindsDetalleInstitucion);
+
+
+  const insertDetalleCoordinadorSql = `INSERT INTO detalle_convenio_coordinador (id_detalle_conv_coord, id_convenio, id_coordinador) VALUES(0, :id_convenio_bind, :id_coordinador_bind)`;
+
+  const bindsDetalleCoordinador = {
+    id_convenio_bind,
+    id_coordinador_bind
+  };
+  console.log("BINDS COORDINADOR");
+  console.log(bindsDetalleCoordinador);
+
+  await database.simpleExecute(insertDetalleCoordinadorSql, bindsDetalleCoordinador);
+
+
+  return datos;
+
 }
   
 module.exports.create = create;

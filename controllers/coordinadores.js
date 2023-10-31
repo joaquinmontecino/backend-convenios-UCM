@@ -28,6 +28,7 @@ module.exports.get = get;
   
 function getCoordinadorFromReq(req) {
   const coordinador = {
+    id_institucion: req.body.id_institucion,
     tipo: req.body.tipo,
     nombre: req.body.nombre,
     correo: req.body.correo
@@ -87,5 +88,5 @@ async function del(req, res, next) {
     next(err);
   }
 }
-  
+
 module.exports.delete = del;

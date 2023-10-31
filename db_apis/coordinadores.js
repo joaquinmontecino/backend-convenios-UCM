@@ -3,6 +3,7 @@ const oracledb = require('oracledb');
 
 const baseSelectQuery = 
  `select id_coordinador "ID_Coordinador",
+    id_institucion "ID_Institucion",
     tipo "Tipo_Coordinador",
     nombre "Nombre",
     correo "Correo"
@@ -31,7 +32,7 @@ const createSql =
   `DECLARE
     id_coordinador_out NUMBER;
    BEGIN
-    CREATE_COORDINADOR(0,:tipo,:nombre,:correo,id_coordinador_out);
+    CREATE_COORDINADOR(0,:id_institucion,:tipo,:nombre,:correo,id_coordinador_out);
     :id_coordinador := id_coordinador_out;
    END;`;
 
@@ -47,6 +48,12 @@ async function create(coord) {
   
   coordinador.id_coordinador = result.outBinds.id_coordinador;
   
+  //const id_coordinador_bind = datos.id_coordinador;
+
+  //const insertDetalleSql = `INSERT INTO detalle_convenio_institucion (id_detalle_conv_inst, id_convenio, id_institucion) VALUES(0, :id_convenio_bind, :id_institucion_bind)`;
+
+
+
   return coordinador;
 }
   

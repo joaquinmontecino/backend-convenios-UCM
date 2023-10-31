@@ -14,6 +14,7 @@ router.route('/convenios/:id?')
   .put(convenios.put)           // Ruta para actualizar un convenio existente
   .delete(convenios.delete);    // Ruta para eliminar un convenio existente
 
+
 router.route('/instituciones/:id?')
   .get(instituciones.get)           
   .post(instituciones.post)         
