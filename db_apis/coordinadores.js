@@ -84,10 +84,11 @@ module.exports.update = update;
 const deleteSql =
   `
    BEGIN
-     
-     DELETE_COORDINADOR(:id_coordinador);
+    DELETE FROM detalle_convenio_coordinador
+    WHERE id_coordinador = :id_coordinador;
+    DELETE_COORDINADOR(:id_coordinador);
  
-     :rowcount := sql%rowcount;
+    :rowcount := sql%rowcount;
  
    END;`
 
