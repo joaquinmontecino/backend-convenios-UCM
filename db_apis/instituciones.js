@@ -93,6 +93,8 @@ module.exports.update = update;
                                   //delete from detalle_convenio_institucion where id_institucion = :id_institucion;
 const deleteSqlInstitucion =
 `BEGIN                      
+  DELETE FROM detalle_convenio_institucion
+  WHERE id_institucion = :id_institucion;
   DELETE_INSTITUCION(:id_institucion);
 
   :rowcount := sql%rowcount;                               

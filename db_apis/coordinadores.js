@@ -84,12 +84,11 @@ module.exports.update = update;
 const deleteSql =
   `
    BEGIN
-      DELETE FROM detalle_convenio_coordinador
-      WHERE id_coordinador = :id_coordinador;
-      DELETE_COORDINADOR(:id_coordinador);
-
+    DELETE FROM detalle_convenio_coordinador
+    WHERE id_coordinador = :id_coordinador;
+    DELETE_COORDINADOR(:id_coordinador);
  
-     :rowcount := sql%rowcount;
+    :rowcount := sql%rowcount;
  
    END;`
 
@@ -107,3 +106,16 @@ async function del(id) {
 }
 
 module.exports.delete = del;
+
+
+const nombresSqlCoordinadores = 
+  `select id_coordinador "ID_Coordinador", nombre "Nombre"
+  from coordinador
+  order by id_coordinador`;
+
+async function listarNombres(){
+  let query = nombresSqlCoordinadores;
+  const result = await database.simpleExecute(query, {});
+  return result.rows;
+}
+module.exports.listarNombres = listarNombres;

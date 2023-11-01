@@ -29,6 +29,7 @@ router.route('/coordinadores/:id?')
   .post(coordinadores.post)         
   .put(coordinadores.put)           
   .delete(coordinadores.delete);
+router.route('/nombresCoordinadores').get(coordinadores.listar);
 
 router.route('/renovaciones/:id?')
   .get(renovaciones.get)           

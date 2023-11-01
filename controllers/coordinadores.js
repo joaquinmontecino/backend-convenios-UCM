@@ -90,3 +90,15 @@ async function del(req, res, next) {
 }
 
 module.exports.delete = del;
+
+
+async function listar(req,res,next){
+  try{
+    const rows = await coordinadores.listarNombres();
+    res.status(200).json(rows);
+  }catch (err){
+    next(err);
+  }
+}
+
+module.exports.listar = listar;

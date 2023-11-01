@@ -126,6 +126,12 @@ const deleteSql =
  `
   BEGIN
     
+
+    DELETE FROM detalle_convenio_coordinador
+    WHERE id_convenio = :id_convenio;
+    DELETE FROM detalle_convenio_institucion
+    WHERE id_convenio = :id_convenio;
+    
     DELETE_CONVENIO(:id_convenio);
 
     :rowcount := sql%rowcount;
