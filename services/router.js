@@ -18,7 +18,9 @@ router.route('/instituciones/:id?')
   .get(instituciones.get)           
   .post(instituciones.post)         
   .put(instituciones.put)           
-  .delete(instituciones.delete);    
+  .delete(instituciones.delete);   
+  
+  
 router.route('/nombresInstituciones').get(instituciones.listar);
 
 router.route('/coordinadores/:id?')
