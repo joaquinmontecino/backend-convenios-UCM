@@ -105,3 +105,16 @@ async function del(id) {
 }
 
 module.exports.delete = del;
+
+
+const nombresSqlCoordinadores = 
+  `select id_coordinador "ID_Coordinador", nombre "Nombre"
+  from coordinador
+  order by id_coordinador`;
+
+async function listarNombres(){
+  let query = nombresSqlCoordinadores;
+  const result = await database.simpleExecute(query, {});
+  return result.rows;
+}
+module.exports.listarNombres = listarNombres;
