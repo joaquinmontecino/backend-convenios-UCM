@@ -17,6 +17,8 @@ async function find(target) {
   if (target.id) {
     binds.id_renovacion = target.id;
     query += `\nwhere id_renovacion = :id_renovacion`;
+  }else{
+    query += `\norder by id_renovacion`;
   }
   const result = await database.simpleExecute(query, binds);
 
@@ -27,21 +29,12 @@ module.exports.find = find;
 
 
 const createSql =
- `insert into renovacion (
-    id_renovacion,
-    condicion_renovacion,
-    estatus,
-    fecha_inicio,
-    fecha_termino
-  ) values (
-    0,
-    :condicion_renovacion,
-    :estatus,
-    :fecha_inicio,
-    :fecha_termino
-  ) returning id_renovacion
-  into :id_renovacion`;
-
+  `DECLARE
+     id_renovacion_out NUMBER;
+   BEGIN
+    CREATE_RENOVACION(0,:condicion_renovacion,:estatus,:fecha_inicio,:fecha_termino,id_renovacion_out);
+    :id_renovacion := id_renovacion_out;
+   END;`;
 
 async function create(coord) {
   const renovacion = Object.assign({}, coord);
@@ -53,7 +46,7 @@ async function create(coord) {
   
   const result = await database.simpleExecute(createSql, renovacion);
   
-  renovacion.id_renovacion = result.outBinds.id_renovacion[0];
+  renovacion.id_renovacion = result.outBinds.id_renovacion;
   
   return renovacion;
 }
@@ -62,13 +55,9 @@ module.exports.create = create;
 
 
 const updateSql =
- `update renovacion
-  set condicion_renovacion = :condicion_renovacion,
-    estatus = :estatus,
-    fecha_inicio = :fecha_inicio,
-    fecha_termino = :fecha_termino
-  where id_renovacion = :id_renovacion`;
-
+  `BEGIN
+     UPDATE_RENOVACION(:id_renovacion,:condicion_renovacion,:estatus,:fecha_inicio,:fecha_termino);
+   END;`;
 
 async function update(renov) {
   const renovacion = Object.assign({}, renov);
@@ -85,14 +74,14 @@ module.exports.update = update;
 
 
 const deleteSql =
- `begin
-    
-    delete from renovacion
-    where id_renovacion = :id_renovacion;
-
-    :rowcount := sql%rowcount;
-
-  end;`
+  `
+   BEGIN
+     
+     DELETE_RENOVACION(:id_renovacion);
+ 
+     :rowcount := sql%rowcount;
+ 
+   END;`
 
 async function del(id) {
   const binds = {

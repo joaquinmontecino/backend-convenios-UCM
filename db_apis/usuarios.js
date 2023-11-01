@@ -6,26 +6,15 @@ const oracledb = require('oracledb');
     apellido: req.body.apellido,
     vigencia: req.body.vigencia,
     privilegios: req.body.privilegios */
-const createSql =
-  `insert into usuario( 
-    id_usuario,
-    email,
-    contrasena,
-    nombre,
-    apellido,
-    vigencia,
-    privilegios
-    )values (
-    0,
-    :email,
-    :contrasena,
-    :nombre,
-    :apellido,
-    :vigencia,
-    :privilegios
-    )returning id_usuario
-    into :id_usuario`;
 
+const createSql =
+    `DECLARE
+      id_usuario_out NUMBER;
+     BEGIN
+      CREATE_USUARIO(0,:email,:contrasena,:nombre,:apellido,:vigencia,:privilegios,id_usuario_out);
+      :id_usuario := id_usuario_out;
+     END;`;
+   
 async function create (user){
   const usuario = Object.assign({}, user);
   usuario.id_usuario = {
@@ -73,6 +62,7 @@ const selectQuerySinID= `
   vigencia "Vigencia",
   privilegios "Privilegios"
   FROM usuario
+  order by id_usuario
 `;
 
 
@@ -89,3 +79,72 @@ async function find(target){
   return result.rows;
 }
 module.exports.find = find;
+
+
+
+const updateSql =
+  `BEGIN
+     UPDATE_USUARIO(:id_usuario,:email,:contrasena,:nombre,:apellido,:vigencia,:privilegios);
+   END;`;
+
+async function update(renov) {
+  const usuario = Object.assign({}, renov);
+  const result = await database.simpleExecute(updateSql, usuario);
+
+  if (result.rowsAffected === 1) {
+    return usuario;
+  } else {
+    return null;
+  }
+}
+
+module.exports.update = update;
+
+
+const deleteSql =
+  `
+   BEGIN
+     
+     DELETE_USUARIO(:id_usuario);
+ 
+     :rowcount := sql%rowcount;
+ 
+   END;`
+
+async function del(id) {
+  const binds = {
+    id_usuario: id,
+    rowcount: {
+      dir: oracledb.BIND_OUT,
+      type: oracledb.NUMBER
+    }
+  }
+
+  const result = await database.simpleExecute(deleteSql, binds);
+  return result.outBinds.rowcount === 1;
+}
+
+module.exports.delete = del;
+
+
+/*
+const createSql =
+  `insert into usuario( 
+    id_usuario,
+    email,
+    contrasena,
+    nombre,
+    apellido,
+    vigencia,
+    privilegios
+    )values (
+    0,
+    :email,
+    :contrasena,
+    :nombre,
+    :apellido,
+    :vigencia,
+    :privilegios
+    )returning id_usuario
+    into :id_usuario`;
+*/

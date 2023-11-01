@@ -14,6 +14,7 @@ router.route('/convenios/:id?')
   .put(convenios.put)           // Ruta para actualizar un convenio existente
   .delete(convenios.delete);    // Ruta para eliminar un convenio existente
 
+
 router.route('/instituciones/:id?')
   .get(instituciones.get)           
   .post(instituciones.post)         
@@ -38,7 +39,9 @@ router.route('/renovaciones/:id?')
 
 router.route('/usuarios/register').post(usuarios.register);
 router.route('/usuarios/login').post(usuarios.login);
-router.route('/usuarios/').get(usuarios.get);
-router.route('/usuarios/perfil=:id').get(usuarios.get);
+router.route('/usuarios/:id?').get(usuarios.get)
+  .put(usuarios.put)
+  .delete(usuarios.delete);
+//router.route('/usuarios/perfil=:id').get(usuarios.get);
 
 module.exports = router;
