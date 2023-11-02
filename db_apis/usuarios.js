@@ -44,6 +44,7 @@ async function authenticate(credentials){
     return null;
   }
 }
+
 module.exports.authenticate = authenticate;
 
 
@@ -57,6 +58,7 @@ const selectQueryConID= `
 const selectQuerySinID= `
   SELECT id_usuario "ID_Usuario",
   email "Email",
+  contrasena "Contrasena",
   nombre "Nombre",
   apellido "Apellido",
   vigencia "Vigencia",

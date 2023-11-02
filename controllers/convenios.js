@@ -60,7 +60,7 @@ async function post(req, res, next) {
 // Controlador para actualizar un convenio existente.
 async function put(req, res, next) {
   try {
-    let convenio = getConvenioFromReq(req);               // Obtener los datos del convenio de la solicitud
+    let convenio = getDatosFromReq(req);               // Obtener los datos del convenio de la solicitud
 
     convenio.id_convenio = parseInt(req.params.id, 10);   // Obtener el ID del convenio a actualizar
 
