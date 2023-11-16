@@ -128,25 +128,3 @@ async function del(id) {
 
 module.exports.delete = del;
 
-
-/*
-const createSql =
-  `insert into usuario( 
-    id_usuario,
-    email,
-    contrasena,
-    nombre,
-    apellido,
-    vigencia,
-    privilegios
-    )values (
-    0,
-    :email,
-    :contrasena,
-    :nombre,
-    :apellido,
-    :vigencia,
-    :privilegios
-    )returning id_usuario
-    into :id_usuario`;
-*/

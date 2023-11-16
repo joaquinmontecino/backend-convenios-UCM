@@ -1,6 +1,7 @@
 const http = require('http');
 const express = require('express');
 const morgan = require('morgan');
+const cors = require('cors');
 const webServerConfig = require('../config/web-server.js');
 const router = require('./router.js');
 
@@ -17,10 +18,11 @@ function initialize() {
     app.use(express.json({
         reviver: reviveJson
       }));
-      
+    app.use(cors())
+
      // Montar el enrutador en la ruta /api para que todas sus rutas comiencen con /api
     app.use('/api', router);
-    
+
     
     // Iniciar el servidor HTTP en el puerto especificado en la configuración
     httpServer.listen(webServerConfig.port, err => {
