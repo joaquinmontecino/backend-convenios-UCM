@@ -57,19 +57,19 @@ async function post(req, res, next) {
 
 
 
-// Controlador para actualizar un convenio existente.
+
 async function put(req, res, next) {
   try {
-    let convenio = getDatosFromReq(req);               // Obtener los datos del convenio de la solicitud
+    let convenio = getDatosFromReq(req);
 
-    convenio.id_convenio = parseInt(req.params.id, 10);   // Obtener el ID del convenio a actualizar
+    convenio.id_convenio = parseInt(req.params.id, 10);
 
-    convenio = await convenios.update(convenio);          // Actualizar el convenio en la base de datos
+    convenio = await convenios.update(convenio);       
 
     if (convenio !== null) {
-      res.status(200).json(convenio);               // Responder con los detalles del convenio actualizado y código 200 (éxito)
+      res.status(200).json(convenio);               
     } else {
-      res.status(404).end();                        // Si el convenio no se encontró, responder con código 404
+      res.status(404).end();                        
     }
   } catch (err) {
     next(err);

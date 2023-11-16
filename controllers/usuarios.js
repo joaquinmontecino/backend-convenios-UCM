@@ -1,5 +1,20 @@
 const usuarios = require('../db_apis/usuarios.js');
 
+
+function getUsuarioFromReq(req){
+  const usuario = {
+    email: req.body.email,
+    contrasena: req.body.contrasena,
+    nombre: req.body.nombre,
+    apellido: req.body.apellido,
+    vigencia: req.body.vigencia,
+    privilegios: req.body.privilegios
+  };
+  return usuario;
+}
+
+
+
 async function register(req, res, next){
   try{
     let usuario = getUsuarioFromReq(req);
@@ -12,6 +27,13 @@ async function register(req, res, next){
 }
 module.exports.register = register;
 
+function getCredentialsFromReq(req){
+  const credentials ={
+    email: req.body.email,
+    contrasena: req.body.contrasena
+  };
+  return credentials;
+}
 
 async function login(req, res ,next){
   try{
@@ -51,25 +73,6 @@ async function get(req,res,next){
 module.exports.get = get;
 
 
-function getUsuarioFromReq(req){
-  const usuario = {
-    email: req.body.email,
-    contrasena: req.body.contrasena,
-    nombre: req.body.nombre,
-    apellido: req.body.apellido,
-    vigencia: req.body.vigencia,
-    privilegios: req.body.privilegios
-  };
-  return usuario;
-}
-
-function getCredentialsFromReq(req){
-  const credentials ={
-    email: req.body.email,
-    contrasena: req.body.contrasena
-  };
-  return credentials;
-}
 
 
 

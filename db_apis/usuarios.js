@@ -30,7 +30,7 @@ module.exports.create = create;
 
 
 const authenticateUsuarioSql = `
-  SELECT id_usuario, email
+  SELECT id_usuario, email, privilegios
   FROM usuario
   WHERE email = :email AND contrasena = :contrasena
 `;
