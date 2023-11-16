@@ -1,22 +1,22 @@
 const instituciones = require('../db_apis/instituciones.js');
 
-// Controlador para obtener información de una institucion o de todas las instituciones.
+
 async function get(req, res, next) {
   try {
     const target = {};
  
-    target.id = Number(req.params.id);           // Se obtiene el ID del institucion de la solicitud
+    target.id = Number(req.params.id);
 
-    const rows = await instituciones.find(target);   // Se busca en la base de datos
+    const rows = await instituciones.find(target);
 
-    if (req.params.id) {                // Si se proporciona un ID en la solicitud
-      if (rows.length === 1) {                  // Si se encontró una institucion
-        res.status(200).json(rows[0]);          // Responder con los detalles de la institucion
+    if (req.params.id) {
+      if (rows.length === 1) {
+        res.status(200).json(rows[0]);
       } else {
-        res.status(404).end();                  // Si no se encuentra la institucion, responder con código 404
+        res.status(404).end();
       }
     } else {
-      res.status(200).json(rows);      // Si no se proporciona un ID, responder con una lista de todos las instituciones
+      res.status(200).json(rows);
     }
   } catch (err) {
     next(err);
@@ -25,7 +25,7 @@ async function get(req, res, next) {
 
 module.exports.get = get;
 
-// Función para obtener los datos de una institucion a partir de la solicitud.
+
 function getInstitucionFromReq(req) {
   const institucion = {
     nombre_inst: req.body.nombre_inst,
@@ -38,14 +38,14 @@ function getInstitucionFromReq(req) {
   return institucion;
 }
 
-// Controlador para crear una nueva institucion.
+
 async function post(req, res, next) {
   try {
-    let institucion = getInstitucionFromReq(req);         // Obtener los datos de la institucion de la solicitud
+    let institucion = getInstitucionFromReq(req);
 
-    institucion = await instituciones.create(institucion);    // Crear una nueva institucion en la base de datos
+    institucion = await instituciones.create(institucion);
 
-    res.status(201).json(institucion);                 // Responder con los detalles de la nuevo institucion y código 201 (creado)
+    res.status(201).json(institucion);
   } catch (err) {
     next(err);
   }
@@ -54,19 +54,19 @@ async function post(req, res, next) {
 module.exports.post = post;
 
 
-// Controlador para actualizar una institucion existente.
+
 async function put(req, res, next) {
   try {
-    let institucion = getInstitucionFromReq(req);               // Obtener los datos de la institucion de la solicitud
+    let institucion = getInstitucionFromReq(req);
 
-    institucion.id_institucion = parseInt(req.params.id, 10);   // Obtener el ID de la institucion a actualizar
+    institucion.id_institucion = parseInt(req.params.id, 10);
 
-    institucion = await instituciones.update(institucion);          // Actualizar la institucion en la base de datos
+    institucion = await instituciones.update(institucion);
 
     if (institucion !== null) {
-      res.status(200).json(institucion);               // Responder con los detalles de la institucion actualizado y código 200 (éxito)
+      res.status(200).json(institucion);
     } else {
-      res.status(404).end();                        // Si la institucion no se encontró, responder con código 404
+      res.status(404).end();
     }
   } catch (err) {
     next(err);
@@ -75,17 +75,17 @@ async function put(req, res, next) {
 
 module.exports.put = put;
 
-// Controlador para eliminar una institucion existente.
+
 async function del(req, res, next) {
   try {
-    const id = parseInt(req.params.id, 10);       // Obtener el ID de la institucion a eliminar
+    const id = parseInt(req.params.id, 10);
 
-    const success = await instituciones.delete(id);   // Intentar eliminar la institucion de la base de datos
+    const success = await instituciones.delete(id);
 
     if (success) {
-      res.status(204).end();              // Si la eliminación es exitosa, responder con código 204 (sin contenido)
+      res.status(204).end();
     } else {
-      res.status(404).end();              // Si la institucion no se encontró, responder con código 404
+      res.status(404).end();
     }
   } catch (err) {
     next(err);

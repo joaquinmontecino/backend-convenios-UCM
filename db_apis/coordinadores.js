@@ -48,9 +48,6 @@ async function create(coord) {
   
   coordinador.id_coordinador = result.outBinds.id_coordinador;
   
-  //const id_coordinador_bind = datos.id_coordinador;
-
-  //const insertDetalleSql = `INSERT INTO detalle_convenio_institucion (id_detalle_conv_inst, id_convenio, id_institucion) VALUES(0, :id_convenio_bind, :id_institucion_bind)`;
 
 
 
@@ -66,7 +63,7 @@ const updateSql =
    END;`;
 
 
-// TO-DO: Solucionar que la funcion no entra al if, resolviendo la solicitud en status 404, cuando en realidad si funciona correctamente
+
 async function update(coord) {
   const coordinador = Object.assign({}, coord);
   const result = await database.simpleExecute(updateSql, coordinador);

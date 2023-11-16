@@ -2,7 +2,6 @@ const database = require('../services/database.js');
 const oracledb = require('oracledb');
 
 
-// Consulta base para seleccionar los datos de los convenios
 const baseSelectQuery = 
  `SELECT
     C.ID_CONVENIO "ID_Convenio",
@@ -34,20 +33,19 @@ const baseSelectQuery =
     LEFT JOIN
       COORDINADOR CO ON DCC.ID_COORDINADOR = CO.ID_COORDINADOR`;
 
-// Función para buscar convenios en la base de datos según el target proporcionado
 async function find(target) {
   let query = baseSelectQuery;
-  const binds = {};                  // Crea un objeto vacío llamado "binds" para contener los valores a enlazar en la consulta
+  const binds = {};
 
-  if (target.id) {                    // Verifica si el target tiene una propiedad "id"
-    binds.id_convenio = target.id;    // Si target tiene id, asigna ese valor a binds con la clave "id_convenio"
-                                              // Y se adjunta a la consulta una clausula where usando el id, para asi obtener un solo convenio
+  if (target.id) {
+    binds.id_convenio = target.id;
+
     query += `\nWHERE C.ID_CONVENIO = :id_convenio`;
   }else {
     query += `\norder by C.id_convenio`;
   }
 
-  // Ejecuta la consulta en la base de datos, pasando la consulta y los valores a enlazar como argumentos
+
   const result = await database.simpleExecute(query, binds);
 
   return result.rows;
@@ -57,7 +55,6 @@ module.exports.find = find;
 
 
 
-// Consulta SQL para insertar un nuevo convenio en la base de datos
 const createSql =
  `DECLARE
     id_convenio_out NUMBER;
@@ -66,7 +63,7 @@ const createSql =
    :id_convenio := id_convenio_out;
   END;`;
 
-// Función asincrónica para crear un nuevo convenio
+
 async function create(data) {
   const datos = Object.assign({}, data);
   const id_institucion_bind = datos.id_institucion;
@@ -76,8 +73,8 @@ async function create(data) {
   delete datos.id_coordinador;
 
   datos.id_convenio = {
-    dir: oracledb.BIND_OUT,         // Especifica que es una salida
-    type: oracledb.NUMBER           // Especifica el tipo de dato como número
+    dir: oracledb.BIND_OUT,
+    type: oracledb.NUMBER
   };
 
 
@@ -117,31 +114,26 @@ async function create(data) {
 module.exports.create = create;
 
 
-// Consulta SQL para actualizar un convenio existente en la base de datos
 const updateSql =
  `BEGIN
     UPDATE_CONVENIO(:id_convenio,:nombre_conv,:tipo_conv,:vigencia,:ano_firma,:tipo_firma,:cupos,:documentos);
   END;`;
 
 
-// Función asincrónica para actualizar un convenio existente
 async function update(conv) {
   const convenio = Object.assign({}, conv);
   const result = await database.simpleExecute(updateSql, convenio);
 
-  if (result.rowsAffected === 1) {                        // Verifica si se afectó una fila en la base de datos (la actualización fue exitosa)
-    return convenio;                  // Devuelve el objeto "convenio" actualizado
+  if (result.rowsAffected === 1) {
+    return convenio;
   } else {
-    return null;                      // Devuelve nulo si no se actualizó ninguna fila (convenio no encontrado)
+    return null;
   }
 }
 
 module.exports.update = update;
 
 
-// Consulta SQL para eliminar un convenio de la base de datos
-                  // OJO: Luego hay que agregar los intermediarios
-                                  //delete from detalle_convenio_institucion where id_convenio = :id_convenio;
 const deleteSql =
  `
   BEGIN
@@ -158,23 +150,23 @@ const deleteSql =
 
   END;`
 
-// Función asincrónica para eliminar un convenio
+
 async function del(id) {
-    // Define los valores a enlazar en la consulta, incluyendo "id_convenio" y "rowcount" como salida
+
   const binds = {
     id_convenio: id,
     rowcount: {
-      dir: oracledb.BIND_OUT,         // Especifica que es una salida
-      type: oracledb.NUMBER           // Especifica el tipo de dato como número
+      dir: oracledb.BIND_OUT,
+      type: oracledb.NUMBER
     }
   }
 
-  // Ejecuta la consulta SQL de eliminación en la base de datos y pasa los "binds" como argumento
+  
   console.log("binds.rowcount:");
   console.log(binds.rowcount);
   const result = await database.simpleExecute(deleteSql, binds);
 
-  // Devuelve true si se eliminó correctamente (1 fila afectada), de lo contrario, devuelve false
+  
   console.log("RESULT:");
   console.log(result);
   console.log("result.outBinds:");

@@ -1,23 +1,23 @@
 const convenios = require('../db_apis/convenios.js');
 
 
-// Controlador para obtener información de un convenio o de todos los convenios.
+
 async function get(req, res, next) {
   try {
     const target = {};
  
-    target.id = Number(req.params.id);           // Se obtiene el ID del convenio de la solicitud
+    target.id = Number(req.params.id);
 
-    const rows = await convenios.find(target);   // Se busca en la base de datos
+    const rows = await convenios.find(target);
 
-    if (req.params.id) {                // Si se proporciona un ID en la solicitud
-      if (rows.length === 1) {                  // Si se encontró un convenio
-        res.status(200).json(rows[0]);          // Responder con los detalles del convenio
+    if (req.params.id) {
+      if (rows.length === 1) {
+        res.status(200).json(rows[0]);
       } else {
-        res.status(404).end();                  // Si no se encuentra el convenio, responder con código 404
+        res.status(404).end();
       }
     } else {
-      res.status(200).json(rows);      // Si no se proporciona un ID, responder con una lista de todos los convenios
+      res.status(200).json(rows);
     }
   } catch (err) {
     next(err);
@@ -25,7 +25,7 @@ async function get(req, res, next) {
 }
 
 
-// Función para obtener los datos de un convenio a partir de la solicitud.
+
 function getDatosFromReq(req) {
   const datos = {
     id_institucion: req.body.id_institucion,
@@ -42,14 +42,14 @@ function getDatosFromReq(req) {
   return datos;
 }
 
-// Controlador para crear un nuevo convenio.
+
 async function post(req, res, next) {
   try {
-    let datos = getDatosFromReq(req);         // Obtener los datos del convenio de la solicitud
+    let datos = getDatosFromReq(req);
 
-    datos = await convenios.create(datos);    // Crear un nuevo convenio en la base de datos
+    datos = await convenios.create(datos);
 
-    res.status(201).json(datos);                 // Responder con los detalles del nuevo convenio y código 201 (creado)
+    res.status(201).json(datos);
   } catch (err) {
     next(err);
   }
@@ -76,17 +76,17 @@ async function put(req, res, next) {
   }
 }
   
-// Controlador para eliminar un convenio existente.
+
 async function del(req, res, next) {
   try {
-    const id = parseInt(req.params.id, 10);       // Obtener el ID del convenio a eliminar
+    const id = parseInt(req.params.id, 10);
 
-    const success = await convenios.delete(id);   // Intentar eliminar el convenio de la base de datos
+    const success = await convenios.delete(id);
 
     if (success) {
-      res.status(204).end();              // Si la eliminación es exitosa, responder con código 204 (sin contenido)
+      res.status(204).end();
     } else {
-      res.status(404).end();              // Si el convenio no se encontró, responder con código 404
+      res.status(404).end();
     }
   } catch (err) {
     next(err);

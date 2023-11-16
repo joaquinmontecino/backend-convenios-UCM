@@ -7,12 +7,12 @@ const coordinadores = require('../controllers/coordinadores.js');
 const renovaciones = require('../controllers/renovaciones.js');
 
 
-// Definición de rutas para la gestión de convenios, opcionalmente especificando un ID
+
 router.route('/convenios/:id?')
-  .get(convenios.get)           // Ruta para obtener detalles de un convenio (puede incluir un ID)
-  .post(convenios.post)         // Ruta para crear un nuevo convenio
-  .put(convenios.put)           // Ruta para actualizar un convenio existente
-  .delete(convenios.delete);    // Ruta para eliminar un convenio existente
+  .get(convenios.get)
+  .post(convenios.post)
+  .put(convenios.put)
+  .delete(convenios.delete);
 
 
 router.route('/instituciones/:id?')
@@ -43,6 +43,5 @@ router.route('/usuarios/login').post(usuarios.login);
 router.route('/usuarios/:id?').get(usuarios.get)
   .put(usuarios.put)
   .delete(usuarios.delete);
-//router.route('/usuarios/perfil=:id').get(usuarios.get);
 
 module.exports = router;

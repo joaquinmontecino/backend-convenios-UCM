@@ -89,8 +89,8 @@ const updateSql =
      UPDATE_USUARIO(:id_usuario,:email,:contrasena,:nombre,:apellido,:vigencia,:privilegios);
    END;`;
 
-async function update(renov) {
-  const usuario = Object.assign({}, renov);
+async function update(user) {
+  const usuario = Object.assign({}, user);
   const result = await database.simpleExecute(updateSql, usuario);
 
   if (result.rowsAffected === 1) {
