@@ -55,12 +55,24 @@ async function post(req, res, next) {
   }
 }
 
+function getDatosFromReqForUpdate(req) {
+  const datos = {
+    nombre_conv: req.body.nombre_conv,
+    tipo_conv: req.body.tipo_conv,
+    vigencia: req.body.vigencia,
+    ano_firma: req.body.ano_firma,
+    tipo_firma: req.body.tipo_firma,
+    cupos: req.body.cupos,
+    documentos: req.body.documentos      
+  };
 
+  return datos;
+}
 
 
 async function put(req, res, next) {
   try {
-    let convenio = getDatosFromReq(req);
+    let convenio = getDatosFromReqForUpdate(req);
 
     convenio.id_convenio = parseInt(req.params.id, 10);
 

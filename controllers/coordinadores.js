@@ -52,9 +52,20 @@ async function post(req, res, next) {
 module.exports.post = post;
   
   
+function getCoordinadorFromReqForUpdate(req) {
+  const coordinador = {
+    tipo: req.body.tipo,
+    nombre: req.body.nombre,
+    correo: req.body.correo
+  };
+ 
+  return coordinador;
+}
+
+
 async function put(req, res, next) {
   try {
-    let coordinador = getCoordinadorFromReq(req);
+    let coordinador = getCoordinadorFromReqForUpdate(req);
 
     coordinador.id_coordinador = parseInt(req.params.id, 10);
 
