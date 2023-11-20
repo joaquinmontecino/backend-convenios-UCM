@@ -65,7 +65,7 @@ function getCoordinadorFromReqForUpdate(req) {
 
 async function put(req, res, next) {
   try {
-    let coordinador = getCoordinadorFromReqForUpdate(req);
+    let coordinador = getCoordinadorFromReq(req);
 
     coordinador.id_coordinador = parseInt(req.params.id, 10);
 

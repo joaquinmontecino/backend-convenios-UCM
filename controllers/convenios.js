@@ -72,7 +72,7 @@ function getDatosFromReqForUpdate(req) {
 
 async function put(req, res, next) {
   try {
-    let convenio = getDatosFromReqForUpdate(req);
+    let convenio = getDatosFromReq(req);
 
     convenio.id_convenio = parseInt(req.params.id, 10);
 
