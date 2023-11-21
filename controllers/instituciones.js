@@ -29,7 +29,6 @@ module.exports.get = get;
 function getInstitucionFromReq(req) {
   const institucion = {
     nombre_inst: req.body.nombre_inst,
-    unidad_academica: req.body.unidad_academica,
     pais: req.body.pais,
     alcance: req.body.alcance,
     tipo_institucion: req.body.tipo_institucion

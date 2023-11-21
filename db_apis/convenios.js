@@ -7,14 +7,19 @@ const baseSelectQuery =
     C.ID_CONVENIO "ID_Convenio",
     C.NOMBRE_CONV "Nombre_Convenio",
     C.TIPO_CONV "Tipo_Convenio",
+    C.MOVILIDAD "Movilidad",
     C.VIGENCIA "Vigencia",
     C.ANO_FIRMA "Anio_Firma",
     C.TIPO_FIRMA "Tipo_Firma",
     C.CUPOS "Cupos",
     C.DOCUMENTOS "Documentos",
+    C.CONDICION_RENOVACION "Condicion_Renovacion",
+    C.ESTATUS "Estatus",
+    C.FECHA_INICIO "Fecha_Inicio",
+    C.FECHA_TERMINO "Fecha_Termino",
     I.ID_INSTITUCION "ID_Institucion",
     I.NOMBRE_INST "Nombre_Institucion",
-    I.UNIDAD_ACADEMICA "Unidad_Academica",
+    UG.NOMBRE_UNIDAD "Nombre_Unidad_Gestora",
     I.PAIS "Pais",
     I.ALCANCE "Alcance",
     I.TIPO_INSTITUCION "Tipo_Institucion",
@@ -25,9 +30,9 @@ const baseSelectQuery =
     FROM
       CONVENIO C
     JOIN
-      DETALLE_CONVENIO_INSTITUCION DCI ON C.ID_CONVENIO = DCI.ID_CONVENIO
+      UNIDAD_GESTORA UG ON C.ID_CONVENIO = UG.ID_CONVENIO
     JOIN
-      INSTITUCION I ON DCI.ID_INSTITUCION = I.ID_INSTITUCION
+      INSTITUCION I ON UG.ID_INSTITUCION = I.ID_INSTITUCION
     LEFT JOIN
       DETALLE_CONVENIO_COORDINADOR DCC ON C.ID_CONVENIO = DCC.ID_CONVENIO
     LEFT JOIN
@@ -59,15 +64,13 @@ const createSql =
  `DECLARE
     id_convenio_out NUMBER;
   BEGIN
-   CREATE_CONVENIO(0,:nombre_conv,:tipo_conv,:vigencia,:ano_firma,:tipo_firma,:cupos,:documentos,id_convenio_out);
+   CREATE_CONVENIO(0,:id_unidad_gestora,:nombre_conv,:tipo_conv,:movilidad,:vigencia,:ano_firma,:tipo_firma,:cupos,:documentos,:condicion_renovacion,:estatus,:fecha_inicio,:fecha_termino,id_convenio_out);
    :id_convenio := id_convenio_out;
   END;`;
 
 
 async function create(data) {
   const datos = Object.assign({}, data);
-  const id_institucion_bind = datos.id_institucion;
-  delete datos.id_institucion;
 
   const id_coordinador_bind = datos.id_coordinador;
   delete datos.id_coordinador;
@@ -77,23 +80,10 @@ async function create(data) {
     type: oracledb.NUMBER
   };
 
-
   const result = await database.simpleExecute(createSql, datos);
     
   datos.id_convenio = result.outBinds.id_convenio;
-
-
   const id_convenio_bind = datos.id_convenio;
-
-  const insertDetalleInstitucionSql = `INSERT INTO detalle_convenio_institucion (id_detalle_conv_inst, id_convenio, id_institucion) VALUES(0, :id_convenio_bind, :id_institucion_bind)`;
-  
-  const bindsDetalleInstitucion = {
-    id_convenio_bind,
-    id_institucion_bind
-  };
-    
-  await database.simpleExecute(insertDetalleInstitucionSql, bindsDetalleInstitucion);
-
 
   const insertDetalleCoordinadorSql = `INSERT INTO detalle_convenio_coordinador (id_detalle_conv_coord, id_convenio, id_coordinador) VALUES(0, :id_convenio_bind, :id_coordinador_bind)`;
 
@@ -101,11 +91,8 @@ async function create(data) {
     id_convenio_bind,
     id_coordinador_bind
   };
-  console.log("BINDS COORDINADOR");
-  console.log(bindsDetalleCoordinador);
 
   await database.simpleExecute(insertDetalleCoordinadorSql, bindsDetalleCoordinador);
-
 
   return datos;
 
@@ -116,7 +103,7 @@ module.exports.create = create;
 
 const updateSql =
  `BEGIN
-    UPDATE_CONVENIO(:id_convenio,:nombre_conv,:tipo_conv,:vigencia,:ano_firma,:tipo_firma,:cupos,:documentos);
+    UPDATE_CONVENIO(:id_convenio,:id_unidad_gestora,:nombre_conv,:tipo_conv,:movilidad,:vigencia,:ano_firma,:tipo_firma,:cupos,:documentos);
   END;`;
 
 
@@ -138,12 +125,9 @@ const deleteSql =
  `
   BEGIN
     
-
     DELETE FROM detalle_convenio_coordinador
       WHERE id_convenio = :id_convenio;
-    DELETE FROM detalle_convenio_institucion
-      WHERE id_convenio = :id_convenio;
-    
+
     DELETE_CONVENIO(:id_convenio);
 
     :rowcount := sql%rowcount;
@@ -161,18 +145,8 @@ async function del(id) {
     }
   }
 
-  
-  console.log("binds.rowcount:");
-  console.log(binds.rowcount);
   const result = await database.simpleExecute(deleteSql, binds);
 
-  
-  console.log("RESULT:");
-  console.log(result);
-  console.log("result.outBinds:");
-  console.log(result.outBinds);
-  console.log("SE ELIMINO?");
-  console.log(result.outBinds.rowcount === 1);
   return result.outBinds.rowcount === 1;
 }
 

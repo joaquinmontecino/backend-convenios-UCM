@@ -5,7 +5,7 @@ const instituciones = require('../controllers/instituciones.js');
 const usuarios = require('../controllers/usuarios.js');
 const coordinadores = require('../controllers/coordinadores.js');
 const renovaciones = require('../controllers/renovaciones.js');
-
+const unidades_gestoras = require('../controllers/unidades_gestoras.js')
 
 
 router.route('/convenios/:id?')
@@ -36,6 +36,12 @@ router.route('/renovaciones/:id?')
   .post(renovaciones.post)         
   .put(renovaciones.put)           
   .delete(renovaciones.delete);
+
+router.route('/unidad_gestora/:id?')
+  .get(unidades_gestoras.get)
+  .post(unidades_gestoras.post)         
+  .put(unidades_gestoras.put)           
+  .delete(unidades_gestoras.delete);
 
 
 router.route('/usuarios/register').post(usuarios.register);

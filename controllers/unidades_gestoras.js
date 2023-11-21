@@ -1,4 +1,4 @@
-const renovaciones = require('../db_apis/renovaciones.js');
+const unidades_gestoras = require('../db_apis/unidades_gestoras.js');
 
 
 async function get(req, res, next) {
@@ -7,7 +7,7 @@ async function get(req, res, next) {
  
     target.id = Number(req.params.id);
 
-    const rows = await renovaciones.find(target);
+    const rows = await unidades_gestoras.find(target);
 
     if (req.params.id) {
       if (rows.length === 1) {
@@ -26,24 +26,22 @@ async function get(req, res, next) {
 module.exports.get = get;
 
   
-function getRenovacionFromReq(req) {
-  const renovacion = {
-    condicion_renovacion: req.body.condicion_renovacion,
-    estatus: req.body.estatus,
-    fecha_inicio: req.body.fecha_inicio,
-    fecha_termino: req.body.fecha_termino
+function getUnidadGestoraFromReq(req) {
+  const unidad_gestora = {
+    id_institucion: req.body.id_institucion,
+    nombre_unidad: req.body.nombre_unidad
   };
  
-  return renovacion;
+  return unidad_gestora;
 }
   
 async function post(req, res, next) {
   try {
-    let renovacion = getRenovacionFromReq(req);
+    let unidad_gestora = getUnidadGestoraFromReq(req);
 
-    renovacion = await renovaciones.create(renovacion);
+    unidad_gestora = await unidades_gestoras.create(unidad_gestora);
 
-    res.status(201).json(renovacion);
+    res.status(201).json(unidad_gestora);
   } catch (err) {
     next(err);
   }
@@ -54,14 +52,14 @@ module.exports.post = post;
   
 async function put(req, res, next) {
   try {
-    let renovacion = getRenovacionFromReq(req);
+    let unidad_gestora = getRenovacionFromReq(req);
 
-    renovacion.id_renovacion = parseInt(req.params.id, 10);
+    unidad_gestora.id_unidad_gestora = parseInt(req.params.id, 10);
 
-    renovacion = await renovaciones.update(renovacion);
+    unidad_gestora = await unidades_gestoras.update(unidad_gestora);
 
-    if (renovacion !== null) {
-      res.status(200).json(renovacion);
+    if (unidad_gestora !== null) {
+      res.status(200).json(unidad_gestora);
     } else {
       res.status(404).end();
     }
@@ -77,7 +75,7 @@ async function del(req, res, next) {
   try {
     const id = parseInt(req.params.id, 10);
 
-    const success = await renovaciones.delete(id);
+    const success = await unidades_gestoras.delete(id);
 
     if (success) {
       res.status(204).end();

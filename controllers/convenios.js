@@ -28,15 +28,20 @@ async function get(req, res, next) {
 
 function getDatosFromReq(req) {
   const datos = {
-    id_institucion: req.body.id_institucion,
+    id_unidad_gestora: req.body.id_unidad_gestora,
     id_coordinador: req.body.id_coordinador,
     nombre_conv: req.body.nombre_conv,
     tipo_conv: req.body.tipo_conv,
+    movilidad: req.body.movilidad,
     vigencia: req.body.vigencia,
     ano_firma: req.body.ano_firma,
     tipo_firma: req.body.tipo_firma,
     cupos: req.body.cupos,
-    documentos: req.body.documentos      
+    documentos: req.body.documentos,
+    condicion_renovacion: req.body.condicion_renovacion,
+    estatus: req.body.estatus,
+    fecha_inicio: req.body.fecha_inicio,
+    fecha_termino: req.body.fecha_termino  
   };
 
   return datos;

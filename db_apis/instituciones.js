@@ -6,7 +6,6 @@ const oracledb = require('oracledb');
 const baseSelectQueryInstitucion = 
   `select id_institucion "id",
   nombre_inst "Nombre_Institucion",
-  unidad_academica "Unidad_Academica",
   pais "Pais",
   alcance "Alcance",
   tipo_institucion "Tipo_Institucion"
@@ -40,7 +39,7 @@ const createSqlInstitucion =
   `DECLARE
      id_institucion_out NUMBER;
    BEGIN
-    CREATE_INSTITUCION(0,:nombre_inst,:unidad_academica,:pais,:alcance,:tipo_institucion,id_institucion_out);
+    CREATE_INSTITUCION(0,:nombre_inst,:pais,:alcance,:tipo_institucion,id_institucion_out);
     :id_institucion := id_institucion_out;
    END;`;
 
@@ -65,7 +64,7 @@ module.exports.create = create;
 
 const updateSqlInstitucion =
 `BEGIN
-    UPDATE_INSTITUCION(:id_institucion,:nombre_inst,:unidad_academica,:pais,:alcance,:tipo_institucion);
+    UPDATE_INSTITUCION(:id_institucion,:nombre_inst,:pais,:alcance,:tipo_institucion);
   END;`;
 
 async function update(inst) {
@@ -84,8 +83,6 @@ module.exports.update = update;
 
 const deleteSqlInstitucion =
 `BEGIN                      
-  DELETE FROM detalle_convenio_institucion
-  WHERE id_institucion = :id_institucion;
   DELETE_INSTITUCION(:id_institucion);
 
   :rowcount := sql%rowcount;                               
