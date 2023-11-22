@@ -19,6 +19,7 @@ const baseSelectQuery =
     TO_CHAR(C.FECHA_TERMINO, 'DD/MM/YY') "Fecha_Termino",
     I.ID_INSTITUCION "ID_Institucion",
     I.NOMBRE_INST "Nombre_Institucion",
+    UG.ID_UNIDAD_GESTORA "ID_Unidad_Gestora",
     UG.NOMBRE_UNIDAD "Nombre_Unidad_Gestora",
     I.PAIS "Pais",
     I.ALCANCE "Alcance",
