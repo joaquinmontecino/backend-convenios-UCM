@@ -15,8 +15,8 @@ const baseSelectQuery =
     C.DOCUMENTOS "Documentos",
     C.CONDICION_RENOVACION "Condicion_Renovacion",
     C.ESTATUS "Estatus",
-    C.FECHA_INICIO "Fecha_Inicio",
-    C.FECHA_TERMINO "Fecha_Termino",
+    TO_CHAR(C.FECHA_INICIO, 'DD/MM/YY') "Fecha_Inicio",
+    TO_CHAR(C.FECHA_TERMINO, 'DD/MM/YY') "Fecha_Termino",
     I.ID_INSTITUCION "ID_Institucion",
     I.NOMBRE_INST "Nombre_Institucion",
     UG.NOMBRE_UNIDAD "Nombre_Unidad_Gestora",
@@ -71,7 +71,8 @@ const createSql =
 
 async function create(data) {
   const datos = Object.assign({}, data);
-
+  console.log("datos EN CREATE");
+  console.log(datos);
   const id_coordinador_bind = datos.id_coordinador;
   delete datos.id_coordinador;
 
@@ -103,12 +104,13 @@ module.exports.create = create;
 
 const updateSql =
  `BEGIN
-    UPDATE_CONVENIO(:id_convenio,:id_unidad_gestora,:nombre_conv,:tipo_conv,:movilidad,:vigencia,:ano_firma,:tipo_firma,:cupos,:documentos);
+    UPDATE_CONVENIO(:id_convenio,:id_unidad_gestora,:nombre_conv,:tipo_conv,:movilidad,:vigencia,:ano_firma,:tipo_firma,:cupos,:documentos,:condicion_renovacion,:estatus,:fecha_inicio,:fecha_termino);
   END;`;
 
 
 async function update(conv) {
   const convenio = Object.assign({}, conv);
+  delete convenio.id_coordinador;
   const result = await database.simpleExecute(updateSql, convenio);
 
   if (result.rowsAffected === 1) {
@@ -155,14 +157,93 @@ module.exports.delete = del;
 
 
 
+function construirQueryDinamica(criteria){
+  let query = 'SELECT C.* FROM CONVENIO C';
+  query+= ' LEFT JOIN UNIDAD_GESTORA UG ON C.ID_UNIDAD_GESTORA = UG.ID_UNIDAD_GESTORA'
+  query += ' LEFT JOIN INSTITUCION I ON UG.ID_INSTITUCION = I.ID_INSTITUCION';
+  let whereClause = '';
+  const binds = {};
+  if (criteria.id_institucion || criteria.id_unidad_gestora){
+    whereClause += ' WHERE';
+    
+    if (criteria.id_institucion && criteria.id_unidad_gestora) {
+      whereClause += ' (UG.ID_INSTITUCION = :id_institucion OR UG.ID_UNIDAD_GESTORA = :id_unidad_gestora)';
+      binds.id_institucion = criteria.id_institucion;
+      binds.id_unidad_gestora = criteria.id_unidad_gestora;
+    }
+    else{
+      if (criteria.id_institucion){
+        whereClause += ' UG.ID_INSTITUCION = :id_institucion';
+        binds.id_institucion = criteria.id_institucion;
+      }
+      if(criteria.id_unidad_gestora){
+        whereClause +=' UG.ID_UNIDAD_GESTORA = :id_unidad_gestora';
+        binds.id_unidad_gestora = criteria.id_unidad_gestora;
+      }
+    }
+  }
+
+  if (criteria.tipo_conv){
+    whereClause += `${whereClause.length > 0 ? ' AND' : ' WHERE'} C.TIPO_CONV = :tipo_conv`;
+    binds.tipo_conv = criteria.tipo_conv;
+  }
+  
+  if (criteria.movilidad){
+    whereClause += `${whereClause.length > 0 ? ' AND' : ' WHERE'} C.MOVILIDAD = :movilidad`;
+    binds.movilidad = criteria.movilidad;
+  }
+  
+  if (criteria.ano_firma){
+    whereClause += `${whereClause.length > 0 ? ' AND' : ' WHERE'} C.ANO_FIRMA = :ano_firma`;
+    binds.ano_firma = criteria.ano_firma; 
+  }
+  
+  if (criteria.tipo_firma){
+    whereClause += `${whereClause.length > 0 ? ' AND' : ' WHERE'} C.TIPO_FIRMA = :tipo_firma`;
+    binds.tipo_firma = criteria.tipo_firma;
+  }
+  
+  if (criteria.estatus){
+    whereClause += `${whereClause.length > 0 ? ' AND' : ' WHERE'} C.ESTATUS = :estatus`;
+    binds.estatus = criteria.estatus;
+  }
+
+  if (criteria.fecha_termino){
+    whereClause += `${whereClause.length > 0 ? ' AND ' : ' WHERE'} C.FECHA_TERMINO = :fecha_termino`;
+    binds.fecha_termino = criteria.fecha_termino;
+  }
+
+  if (criteria.pais){
+    whereClause += `${whereClause.length > 0 ? ' AND ' : ' WHERE'} I.PAIS = :pais`;
+    binds.pais = criteria.pais;
+  }
+
+
+  if (criteria.alcance){
+    whereClause += `${whereClause.length > 0 ? ' AND ' : ' WHERE'} I.ALCANCE = :alcance`;
+    binds.alcance = criteria.alcance;
+  }
+
+
+  query += whereClause;
+  return {query, binds};
+}
 
 
 
+async function generarReporte(criteria){
+  console.log('Criteria: ');
+  console.log(criteria);
+  const {query, binds} = construirQueryDinamica(criteria);
+  console.log(query);
+  const result = await database.simpleExecute(query, binds);
+  return result;
+
+}
 
 
 
-
-
+module.exports.generarReporte = generarReporte;
 
 
 

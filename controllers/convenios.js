@@ -28,15 +28,15 @@ async function get(req, res, next) {
 
 function getDatosFromReq(req) {
   const datos = {
-    id_unidad_gestora: req.body.id_unidad_gestora,
-    id_coordinador: req.body.id_coordinador,
+    id_unidad_gestora: parseInt(req.body.id_unidad_gestora, 10),
+    id_coordinador: parseInt(req.body.id_coordinador, 10),
     nombre_conv: req.body.nombre_conv,
     tipo_conv: req.body.tipo_conv,
     movilidad: req.body.movilidad,
     vigencia: req.body.vigencia,
-    ano_firma: req.body.ano_firma,
+    ano_firma: parseInt(req.body.ano_firma, 10),
     tipo_firma: req.body.tipo_firma,
-    cupos: req.body.cupos,
+    cupos: parseInt(req.body.cupos, 10),
     documentos: req.body.documentos,
     condicion_renovacion: req.body.condicion_renovacion,
     estatus: req.body.estatus,
@@ -51,9 +51,11 @@ function getDatosFromReq(req) {
 async function post(req, res, next) {
   try {
     let datos = getDatosFromReq(req);
-
+    console.log("datos EN POST");
+    console.log(datos);
     datos = await convenios.create(datos);
-
+    console.log("datos DESPUES DE CREATE");
+    console.log(datos);
     res.status(201).json(datos);
   } catch (err) {
     next(err);
@@ -109,8 +111,20 @@ async function del(req, res, next) {
     next(err);
   }
 }
-  
 
+
+async function reports(req, res, next){
+  try{
+    const criteria = req.body;
+    console.log(criteria);
+    const result =  await convenios.generarReporte(criteria);
+
+    console.log('ROWS: ', result.rows)
+    res.status(200).json(result.rows);
+  }catch(err){
+    next(err);
+  }
+}
 
 
 
@@ -118,3 +132,4 @@ module.exports.get = get;
 module.exports.post = post;
 module.exports.put = put;
 module.exports.delete = del;
+module.exports.reports = reports;

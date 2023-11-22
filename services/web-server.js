@@ -50,16 +50,29 @@ function close() {
   
 
 const iso8601RegExp = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{3})?Z$/;
-
+const yyyyMMddRegExp = /^\d{4}-\d{2}-\d{2}$/;
 
 function reviveJson(key, value) {
-  if (typeof value === 'string' && iso8601RegExp.test(value)) {
-    return new Date(value);
-  } else {
-    return value;
+  if (typeof value === 'string') {
+    if (iso8601RegExp.test(value)) {
+      const date = new Date(value);
+      const formattedDate = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear() % 100}`;
+      return formattedDate;
+    } else if (yyyyMMddRegExp.test(value)) {
+      const parts = value.split('-');
+      const formattedDate = `${parts[2]}/${parts[1]}/${parts[0] % 100}`;
+      return formattedDate;
+    }
   }
+  return value;
 }
-
 
 module.exports.initialize = initialize;
 module.exports.close = close;
+
+
+const serverResponse = '{"fecha_inicio": "2026-08-15T04:00:00.000Z"}';
+console.log('Antes de reviver:', serverResponse);
+
+const parsedResponse = JSON.parse(serverResponse, reviveJson);
+console.log('Después de reviver:', parsedResponse.fecha_inicio);
