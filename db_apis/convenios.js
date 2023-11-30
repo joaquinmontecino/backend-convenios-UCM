@@ -24,20 +24,44 @@ const baseSelectQuery =
     I.PAIS "Pais",
     I.ALCANCE "Alcance",
     I.TIPO_INSTITUCION "Tipo_Institucion",
-    CO.ID_COORDINADOR "ID_Coordinador",
-    CO.TIPO "Tipo_Coordinador",
-    CO.NOMBRE "Nombre_Coordinador",
-    CO.CORREO "Correo_Coordinador"
+    COE.ID_COORDINADOR "ID_Coordinador_Externo",
+    COE.TIPO "Tipo_Coordinador_Externo",
+    COE.NOMBRE "Nombre_Coordinador_Externo",
+    COE.CORREO "Correo_Coordinador_Externo",
+    COI.ID_COORDINADOR "ID_Coordinador_Interno",
+    COI.TIPO "Tipo_Coordinador_Interno",
+    COI.NOMBRE "Nombre_Coordinador_Interno",
+    COI.CORREO "Correo_Coordinador_Interno"
     FROM
       CONVENIO C
     JOIN
       UNIDAD_GESTORA UG ON C.ID_UNIDAD_GESTORA = UG.ID_UNIDAD_GESTORA
     JOIN
       INSTITUCION I ON UG.ID_INSTITUCION = I.ID_INSTITUCION
-    LEFT JOIN
-      DETALLE_CONVENIO_COORDINADOR DCC ON C.ID_CONVENIO = DCC.ID_CONVENIO
-    LEFT JOIN
-      COORDINADOR CO ON DCC.ID_COORDINADOR = CO.ID_COORDINADOR`;
+    LEFT JOIN (
+        SELECT
+            DCC.ID_CONVENIO,
+            CO.ID_COORDINADOR AS ID_COORDINADOR,
+            CO.TIPO AS TIPO,
+            CO.NOMBRE AS NOMBRE,
+            CO.CORREO AS CORREO
+        FROM
+            DETALLE_CONVENIO_COORDINADOR DCC
+        JOIN
+            COORDINADOR CO ON DCC.ID_COORDINADOR = CO.ID_COORDINADOR AND CO.TIPO = 'Externo'
+    ) COE ON C.ID_CONVENIO = COE.ID_CONVENIO
+    LEFT JOIN (
+      SELECT
+          DCC.ID_CONVENIO,
+          CO.ID_COORDINADOR AS ID_COORDINADOR,
+          CO.TIPO AS TIPO,
+          CO.NOMBRE AS NOMBRE,
+          CO.CORREO AS CORREO
+      FROM
+          DETALLE_CONVENIO_COORDINADOR DCC
+      JOIN
+          COORDINADOR CO ON DCC.ID_COORDINADOR = CO.ID_COORDINADOR AND CO.TIPO = 'Interno'
+  ) COI ON C.ID_CONVENIO = COI.ID_CONVENIO`;
 
 async function find(target) {
   let query = baseSelectQuery;
@@ -74,8 +98,10 @@ async function create(data) {
   const datos = Object.assign({}, data);
   console.log("datos EN CREATE");
   console.log(datos);
-  const id_coordinador_bind = datos.id_coordinador;
-  delete datos.id_coordinador;
+  const id_coordinador_externo_bind = datos.id_coordinador_externo;
+  delete datos.id_coordinador_externo;
+  const id_coordinador_interno_bind = datos.id_coordinador_interno;
+  delete datos.id_coordinador_interno;
 
   datos.id_convenio = {
     dir: oracledb.BIND_OUT,
@@ -87,14 +113,21 @@ async function create(data) {
   datos.id_convenio = result.outBinds.id_convenio;
   const id_convenio_bind = datos.id_convenio;
 
-  const insertDetalleCoordinadorSql = `INSERT INTO detalle_convenio_coordinador (id_detalle_conv_coord, id_convenio, id_coordinador) VALUES(0, :id_convenio_bind, :id_coordinador_bind)`;
+  const queryInsertDetalleCoordinadorExterno = `INSERT INTO detalle_convenio_coordinador (id_detalle_conv_coord, id_convenio, id_coordinador) VALUES(0, :id_convenio_bind, :id_coordinador_externo_bind)`;
+  const queryInsertDetalleCoordinadorInterno = `INSERT INTO detalle_convenio_coordinador (id_detalle_conv_coord, id_convenio, id_coordinador) VALUES(0, :id_convenio_bind, :id_coordinador_interno_bind)`;
 
-  const bindsDetalleCoordinador = {
+  const bindsDetalleCoordinadorExterno = {
     id_convenio_bind,
-    id_coordinador_bind
+    id_coordinador_externo_bind
   };
 
-  await database.simpleExecute(insertDetalleCoordinadorSql, bindsDetalleCoordinador);
+  const bindsDetalleCoordinadorInterno = {
+    id_convenio_bind,
+    id_coordinador_interno_bind
+  };
+
+  await database.simpleExecute(queryInsertDetalleCoordinadorExterno, bindsDetalleCoordinadorExterno);
+  await database.simpleExecute(queryInsertDetalleCoordinadorInterno, bindsDetalleCoordinadorInterno);
 
   return datos;
 
@@ -233,7 +266,7 @@ function construirQueryDinamica(criteria){
 
 
 
-async function generarReporte(criteria){
+async function seleccionCriterios(criteria){
   console.log('Criteria: ');
   console.log(criteria);
   const {query, binds} = construirQueryDinamica(criteria);
@@ -245,7 +278,7 @@ async function generarReporte(criteria){
 
 
 
-module.exports.generarReporte = generarReporte;
+module.exports.seleccionCriterios = seleccionCriterios;
 
 
 

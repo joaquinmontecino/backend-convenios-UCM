@@ -116,3 +116,17 @@ async function listarNombres(){
   return result.rows;
 }
 module.exports.listarNombres = listarNombres;
+
+
+const queryCoordinadoresInternos = 
+  `select id_coordinador "ID_Coordinador", nombre "Nombre"
+  from coordinador
+  where tipo = "Interno"`;
+
+async function listarCoordinadoresInternos(){
+  let query = queryCoordinadoresInternos;
+  const result = await database.simpleExecute(query, {});
+  return result.rows;
+}
+
+module.exports.listarCoordinadoresInternos = listarCoordinadoresInternos;

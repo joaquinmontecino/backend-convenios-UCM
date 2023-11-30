@@ -13,7 +13,9 @@ router.route('/convenios/:id?')
   .post(convenios.post)
   .put(convenios.put)
   .delete(convenios.delete);
-router.route('/generarReporte').post(convenios.reports);
+router.route('/criteriosReporte').post(convenios.criteriosReporte);
+router.route('/generarInformePDF').get(convenios.generarInformePDF);
+
 
 router.route('/instituciones/:id?')
   .get(instituciones.get)           
@@ -30,6 +32,7 @@ router.route('/coordinadores/:id?')
   .put(coordinadores.put)           
   .delete(coordinadores.delete);
 router.route('/nombresCoordinadores').get(coordinadores.listar);
+router.route('/listarCoordinadoresInternos').get(coordinadores.listarInternos);
 
 
 router.route('/renovaciones/:id?')

@@ -113,3 +113,14 @@ async function listar(req,res,next){
 }
 
 module.exports.listar = listar;
+
+async function listarInternos(req,res,next){
+  try{
+    const rows = await coordinadores.listarCoordinadoresInternos();
+    res.status(200).json(rows);
+  }catch (err){
+    next(err);
+  }
+}
+
+module.exports.listarInternos = listarInternos;
