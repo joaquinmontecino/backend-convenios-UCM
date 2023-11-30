@@ -121,7 +121,7 @@ module.exports.listarNombres = listarNombres;
 const queryCoordinadoresInternos = 
   `select id_coordinador "ID_Coordinador", nombre "Nombre"
   from coordinador
-  where tipo = "Interno"`;
+  where tipo = 'Interno'`;
 
 async function listarCoordinadoresInternos(){
   let query = queryCoordinadoresInternos;
