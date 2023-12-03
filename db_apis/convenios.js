@@ -145,7 +145,8 @@ const updateSql =
 async function update(conv) {
   const convenio = Object.assign({}, conv);
   delete convenio.id_unidad_gestora;
-  delete convenio.id_coordinador;
+  delete convenio.id_coordinador_externo;
+  delete convenio.id_coordinador_interno;
   const result = await database.simpleExecute(updateSql, convenio);
 
   if (result.rowsAffected === 1) {
