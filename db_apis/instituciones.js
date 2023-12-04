@@ -111,6 +111,7 @@ module.exports.delete = del;
 const nombresSqlInstitucion = 
   `select id_institucion "ID_Institucion", nombre_inst "Nombre_Institucion"
   from institucion
+  where id_institucion != 0
   order by id_institucion`;
 
 async function listarNombres(){
