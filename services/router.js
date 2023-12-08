@@ -14,7 +14,7 @@ router.route('/convenios/:id?')
   .put(convenios.put)
   .delete(convenios.delete);
 router.route('/criteriosReporte').post(convenios.criteriosReporte);
-router.route('/generarInformePDF').get(convenios.generarInformePDF);
+router.route('/generarInformePDF').post(convenios.generarInformePDF);
 
 
 router.route('/instituciones/:id?')
