@@ -35,12 +35,6 @@ router.route('/nombresCoordinadores').get(coordinadores.listar);
 router.route('/listarCoordinadoresInternos').get(coordinadores.listarInternos);
 
 
-router.route('/renovaciones/:id?')
-  .get(renovaciones.get)           
-  .post(renovaciones.post)         
-  .put(renovaciones.put)           
-  .delete(renovaciones.delete);
-
 router.route('/unidad_gestora/:id?')
   .get(unidades_gestoras.get)
   .post(unidades_gestoras.post)         

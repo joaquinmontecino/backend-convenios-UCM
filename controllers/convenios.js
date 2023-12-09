@@ -137,29 +137,28 @@ async function generarInformePDF(req, res, next) {
     const formattedTime = currentDate.toLocaleTimeString();
     const dateTimeString = `${formattedDate} ${formattedTime}`;
 
-    // Crea un nuevo documento PDF
+    
     const pdfDoc = new jsPDF({
-      orientation: 'landscape', // 'portrait' para orientación vertical
+      orientation: 'landscape', // 'portrait'
       unit: 'mm',
       format: 'legal',
     });
 
-    // Agrega el encabezado al PDF
+    
     pdfDoc.setFontSize(18);
     pdfDoc.text('Informe de Convenios', pdfDoc.internal.pageSize.width / 2, 20, { align: 'center' });
 
     pdfDoc.setFontSize(12);
     pdfDoc.text(`Fecha y hora de generación: ${dateTimeString}`, 20, 30);
 
-    // Construye una matriz para la tabla
+
     const tableData = [
-      ['ID', 'Nombre', 'Tipo', 'Movilidad', 'Vigencia', 'Año de Firma', 'Tipo de Firma', 'Cupos', 'Documentos', 'Condicion de Renovación', 'Estado', 'Fecha de inicio', 'Fecha de termino']
+      [/*'ID', */'Nombre', 'Tipo', 'Movilidad', 'Vigencia', 'Año de Firma', 'Tipo de Firma', 'Cupos', 'Documentos', 'Condicion de Renovación', 'Estado', 'Fecha de inicio', 'Fecha de termino']
     ];
 
-    // Agrega cada convenio a la matriz
     convenios.forEach(convenio => {
       const row = [
-        convenio.ID_CONVENIO,
+       // convenio.ID_CONVENIO,
         convenio.NOMBRE_CONV,
         convenio.TIPO_CONV,
         convenio.MOVILIDAD,
@@ -177,7 +176,7 @@ async function generarInformePDF(req, res, next) {
     });
 
     const columnStyles = {
-      0: { cellWidth: 10 }, // ID
+      //0: { cellWidth: 10 }, // ID
       1: { cellWidth: 50 }, // Nombre
       2: { cellWidth: 25 }, // Tipo
       3: { cellWidth: 20 }, // Movilidad
@@ -193,7 +192,6 @@ async function generarInformePDF(req, res, next) {
 
     };
 
-    // Agrega la tabla al PDF
     pdfDoc.autoTable({
       head: [tableData[0]],
       body: tableData.slice(1),
@@ -202,14 +200,12 @@ async function generarInformePDF(req, res, next) {
       columnStyles,
     });
 
-    // Guarda o descarga el archivo PDF
     const pdfBytes = pdfDoc.output('arraybuffer');
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition', 'attachment; filename=informe.pdf');
     res.status(200).send(Buffer.from(pdfBytes));
 
   } catch (error) {
-    // Manejo de errores
     console.error(error);
     next(error);
     res.status(500).send('Error generando el informe PDF');
