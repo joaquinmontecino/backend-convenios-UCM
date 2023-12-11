@@ -130,7 +130,7 @@ async function criteriosReporte(req, res, next){
 
 async function generarInformePDF(req, res, next) {
   try {
-    const convenios = req.body.convenios;
+    const convenios = req.body;
 
     const currentDate = new Date();
     const formattedDate = currentDate.toLocaleDateString();
