@@ -4,7 +4,6 @@ const convenios = require('../controllers/convenios.js');
 const instituciones = require('../controllers/instituciones.js');
 const usuarios = require('../controllers/usuarios.js');
 const coordinadores = require('../controllers/coordinadores.js');
-const renovaciones = require('../controllers/renovaciones.js');
 const unidades_gestoras = require('../controllers/unidades_gestoras.js')
 
 
@@ -15,6 +14,7 @@ router.route('/convenios/:id?')
   .delete(convenios.delete);
 router.route('/criteriosReporte').post(convenios.criteriosReporte);
 router.route('/generarInformePDF').post(convenios.generarInformePDF);
+router.route('/generarInformePDF2').post(convenios.generarInformePDF2);
 
 
 router.route('/instituciones/:id?')

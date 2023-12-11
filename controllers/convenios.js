@@ -130,7 +130,7 @@ async function criteriosReporte(req, res, next){
 
 async function generarInformePDF(req, res, next) {
   try {
-    const convenios = req.body;
+    const convenios = req.body.convenios;
 
     const currentDate = new Date();
     const formattedDate = currentDate.toLocaleDateString();
@@ -212,6 +212,120 @@ async function generarInformePDF(req, res, next) {
   }
 }
 module.exports.generarInformePDF = generarInformePDF;
+
+
+async function generarInformePDF2(req, res, next) {
+  try {
+    const convenios = req.body.convenios;
+    const criterios = req.body.criterios;
+
+    const currentDate = new Date();
+    const formattedDate = currentDate.toLocaleDateString();
+    const formattedTime = currentDate.toLocaleTimeString();
+    const dateTimeString = `${formattedDate} ${formattedTime}`;
+
+    
+    const pdfDoc = new jsPDF({
+      orientation: 'landscape', // 'portrait'
+      unit: 'mm',
+      format: 'legal',
+    });
+
+    
+    pdfDoc.setFontSize(18);
+    pdfDoc.setFont('helvetica', 'bold');
+    pdfDoc.text('Informe de Convenios', pdfDoc.internal.pageSize.width / 2, 20, { align: 'center' });
+
+    pdfDoc.setFontSize(12);
+    pdfDoc.text(`Fecha y hora de generación: ${dateTimeString}`, 20, 30);
+
+    if (req.body.criterios && Object.keys(req.body.criterios).length !== 0) {
+      pdfDoc.text('CRITERIOS:', 20, 40);
+
+      // Función para imprimir etiquetas en negrita
+      const imprimirEtiquetaNegrita = (etiqueta, valor, posY) => {
+        pdfDoc.setFont('helvetica', 'bold');
+        pdfDoc.text(`${etiqueta}:`, 20, posY);
+        pdfDoc.setFont('helvetica', 'normal');
+        pdfDoc.text(`${valor}`, 60, posY);
+      };
+
+      let posY = 50;
+
+      Object.keys(criterios).forEach((key) => {
+        imprimirEtiquetaNegrita(key, criterios[key], posY);
+        posY += 7;
+      });      
+    }
+    
+
+    const tableData = [
+      [/*'ID', */'Nombre', 'Tipo', 'Movilidad', 'Vigencia', 'Año de Firma', 'Tipo de Firma', 'Cupos', 'Documentos', 'Condicion de Renovación', 'Estado', 'Fecha de inicio', 'Fecha de termino']
+    ];
+
+    convenios.forEach(convenio => {
+      const row = [
+       // convenio.ID_CONVENIO,
+        convenio.NOMBRE_CONV,
+        convenio.TIPO_CONV,
+        convenio.MOVILIDAD,
+        convenio.VIGENCIA,
+        convenio.ANO_FIRMA,
+        convenio.TIPO_FIRMA,
+        convenio.CUPOS,
+        convenio.DOCUMENTOS,
+        convenio.CONDICION_RENOVACION,
+        convenio.ESTATUS,
+        convenio.FECHA_INICIO,
+        convenio.FECHA_TERMINO
+      ];
+      tableData.push(row);
+    });
+
+    const columnStyles = {
+      //0: { cellWidth: 10 }, // ID
+      1: { cellWidth: 50 }, // Nombre
+      2: { cellWidth: 25 }, // Tipo
+      3: { cellWidth: 20 }, // Movilidad
+      4: { cellWidth: 20 }, // Vigencia
+      5: { cellWidth: 20 }, // Año de Firma
+      6: { cellWidth: 20 }, // Tipo de Firma
+      7: { cellWidth: 20 }, // Cupos
+      8: { cellWidth: 40 }, // Documentos
+      9: { cellWidth: 30 }, // Condicion de Renovación
+      10: { cellWidth: 20 }, // Estado
+      11: { cellWidth: 20 }, // Fecha de inicio
+      12: { cellWidth: 20 } // Fecha de termino
+
+    };
+
+    pdfDoc.autoTable({
+      head: [tableData[0]],
+      body: tableData.slice(1),
+      startY: 70 + (Object.keys(criterios).length * 5), // Agrega un espacio adicional,
+      theme: 'grid',
+      columnStyles,
+    });
+
+    const pdfBytes = pdfDoc.output('arraybuffer');
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', 'attachment; filename=informe.pdf');
+    res.status(200).send(Buffer.from(pdfBytes));
+
+  } catch (error) {
+    console.error(error);
+    next(error);
+    res.status(500).send('Error generando el informe PDF');
+  }
+}
+module.exports.generarInformePDF2 = generarInformePDF2;
+
+
+
+
+
+
+
 
 module.exports.get = get;
 module.exports.post = post;
