@@ -138,15 +138,21 @@ module.exports.create = create;
 
 const updateSql =
  `BEGIN
-    UPDATE_CONVENIO(:id_convenio,:nombre_conv,:tipo_conv,:movilidad,:vigencia,:ano_firma,:tipo_firma,:cupos,:documentos,:condicion_renovacion,:estatus,:fecha_inicio,:fecha_termino);
+    UPDATE_CONVENIO(:id_convenio,:id_unidad_gestora,:nombre_conv,:tipo_conv,:movilidad,:vigencia,:ano_firma,:tipo_firma,:cupos,:documentos,:condicion_renovacion,:estatus,:fecha_inicio,:fecha_termino);
   END;`;
 
 
 async function update(conv) {
-  const convenio = Object.assign({}, conv);
-  delete convenio.id_unidad_gestora;
+  const convenio = Object.assign({}, conv);  
   delete convenio.id_coordinador_externo;
   delete convenio.id_coordinador_interno;
+  
+  console.log(convenio);
+  
+
+
+
+
   const result = await database.simpleExecute(updateSql, convenio);
 
   if (result.rowsAffected === 1) {

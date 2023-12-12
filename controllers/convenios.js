@@ -28,7 +28,7 @@ async function get(req, res, next) {
 
 function getDatosFromReq(req) {
   const datos = {
-    id_unidad_gestora: parseInt(req.body.id_unidad_gestora, 10),
+    id_unidad_gestora: parseInt(req.body.ID_Unidad_Gestora, 10),
     id_coordinador_externo: parseInt(req.body.id_coordinador_externo, 10),
     id_coordinador_interno: parseInt(req.body.id_coordinador_interno, 10),
     nombre_conv: req.body.nombre_conv,
